@@ -1,4 +1,5 @@
 import sys
+import csv
 import yfinance as yf
 import tti.indicators
 import matplotlib.pyplot as plt
@@ -18,7 +19,7 @@ class SFrame(LabelFrame):
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
 class TheApp():
-    def __init__(self, isin_codes):
+    def __init__(self, ticker_file):
         self._window = Tk()
         self._window.resizable(True, True)
 
@@ -37,11 +38,17 @@ class TheApp():
         inner_frame = sf.display_widget(Frame)
 
         numfig = 0
-        for code in isin_codes:
-            fig = get_yfinance(code)
-            sframe = SFrame(inner_frame, fig, code)
-            sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
-            numfig += 1
+        with open(ticker_file, newline = '') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                code, nom = row
+                fig = get_yfinance(code)
+                if type(fig) != type(None):
+                    sframe = SFrame(inner_frame, fig, f"{code} - {nom}")
+                    sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
+                    numfig += 1
+                else:
+                    print(f'NO STOCK POUR {code}')
 
         self._window.mainloop()
         plt.close('all')
@@ -50,9 +57,12 @@ class TheApp():
 def get_yfinance(isin_code):
     msft = yf.Ticker(isin_code)
     hist = msft.history(period="5y")
+    if hist.size == 0:
+        return None
+
     indicator = tti.indicators.IchimokuCloud(hist)
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
     plt = indicator.getTiGraph()
     return plt.gcf()
 
-TheApp(sys.argv[1:])
+TheApp('tickers.csv')
