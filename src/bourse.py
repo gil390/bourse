@@ -20,7 +20,6 @@ class TheApp():
     def __init__(self, isin_codes):
         self._window = Tk()
         self._window.resizable(True, True)
-        self._window.columnconfigure(0, weight=1)
 
         self._window.title('Plotting in Tkinter')
         #self._window.geometry("1024x768")
@@ -29,13 +28,15 @@ class TheApp():
         plt.switch_backend('agg')
 
         print(type(isin_codes))
-        therow = 0
+        numfig = 0
         for code in isin_codes:
-            self._window.rowconfigure(therow, weight=1)
+            self._window.rowconfigure(numfig // 2, weight=1)
+            self._window.columnconfigure(numfig % 2, weight=1)
+
             fig = get_yfinance(code)
             sframe = SFrame(self._window, fig)
-            sframe.grid(row = therow, column = 0, sticky = "NSEW")
-            therow += 1
+            sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW")
+            numfig += 1
 
         self._window.mainloop()
         plt.close('all')
