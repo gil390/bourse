@@ -6,10 +6,10 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 from tkinter import *
 from tkscrolledframe import ScrolledFrame
 
-class SFrame(Frame):
-    def __init__(self, parent, figure):
-        super().__init__(parent)
-        self.configure(background='#FF0000')
+class SFrame(LabelFrame):
+    def __init__(self, parent, figure, title):
+        super().__init__(parent, text = title)
+        #self.configure(background='#FF0000')
         canvas = FigureCanvasTkAgg(figure,
                                master = self)
         toolbar = NavigationToolbar2Tk(canvas,
@@ -39,7 +39,7 @@ class TheApp():
         numfig = 0
         for code in isin_codes:
             fig = get_yfinance(code)
-            sframe = SFrame(inner_frame, fig)
+            sframe = SFrame(inner_frame, fig, code)
             sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
             numfig += 1
 
