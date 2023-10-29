@@ -4,6 +4,7 @@ import tti.indicators
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from tkinter import *
+from tkscrolledframe import ScrolledFrame
 
 class SFrame(Frame):
     def __init__(self, parent, figure):
@@ -27,15 +28,19 @@ class TheApp():
         # je force un backend qui n est pas Tk
         plt.switch_backend('agg')
 
-        print(type(isin_codes))
+        self._window.rowconfigure(0, weight=1)
+        self._window.columnconfigure(0, weight=1)
+
+        sf = ScrolledFrame(self._window)
+        sf.grid(row = 0, column = 0, sticky = "NSEW")
+
+        inner_frame = sf.display_widget(Frame)
+
         numfig = 0
         for code in isin_codes:
-            self._window.rowconfigure(numfig // 2, weight=1)
-            self._window.columnconfigure(numfig % 2, weight=1)
-
             fig = get_yfinance(code)
-            sframe = SFrame(self._window, fig)
-            sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW")
+            sframe = SFrame(inner_frame, fig)
+            sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
             numfig += 1
 
         self._window.mainloop()
