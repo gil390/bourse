@@ -38,6 +38,7 @@ class STopLevel(Toplevel):
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
     def figureCreate(self):
+        # @TODO: global_envdic doit etre une classe singleton
         global global_envdic
         fig = get_yfinance(self._isin, global_envdic['tmp'])
         return fig
@@ -61,6 +62,7 @@ class TheApp():
             "tmp" : os.environ['TMPDIR']
         }
 
+        # @TODO a transformer en une classe singleton
         global global_envdic
         global_envdic = self._envdic
 
