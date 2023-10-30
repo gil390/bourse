@@ -1,11 +1,26 @@
-import sys
+import sys, os
 import csv
 import yfinance as yf
 import tti.indicators
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from tkinter import *
 from tkscrolledframe import ScrolledFrame
+
+def saveToCSV(histo, filename):
+    histo.to_csv(filename)
+
+def loadFromCSV(filename):
+    yfhisto = pd.read_csv(filename)
+    datedf = pd.to_datetime(yfhisto['Date'], utc = True)
+    yfhisto['Date'] = datedf
+    yfhisto.set_index('Date', inplace = True)
+    return yfhisto
+
+def loadFromYF(ticker, period = '5y'):
+    yfticker = yf.Ticker(ticker)
+    return yfticker.history(period = period)
 
 class SFrame(LabelFrame):
     def __init__(self, parent, figure, title):
@@ -20,6 +35,10 @@ class SFrame(LabelFrame):
 
 class TheApp():
     def __init__(self, ticker_file):
+        self._envdic = {
+            "tmp" : os.environ['TMPDIR']
+        }
+
         self._window = Tk()
         self._window.resizable(True, True)
 
@@ -42,7 +61,7 @@ class TheApp():
             reader = csv.reader(csvfile)
             for row in reader:
                 code, nom = row
-                fig = get_yfinance(code)
+                fig = get_yfinance(code, self._envdic['tmp'])
                 if type(fig) != type(None):
                     sframe = SFrame(inner_frame, fig, f"{code} - {nom}")
                     sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
@@ -54,11 +73,16 @@ class TheApp():
         plt.close('all')
 
 # @return current figure
-def get_yfinance(isin_code):
-    msft = yf.Ticker(isin_code)
-    hist = msft.history(period="5y")
-    if hist.size == 0:
-        return None
+def get_yfinance(isin_code, tmppath):
+    filename = os.path.join(tmppath, f'{isin_code}.csv')
+    if os.path.isfile(filename):
+        print('from file')
+        hist = loadFromCSV(filename)
+    else:
+        hist = loadFromYF(isin_code)
+        if hist.size == 0:
+            return None
+        saveToCSV(hist, filename)
 
     indicator = tti.indicators.IchimokuCloud(hist)
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
