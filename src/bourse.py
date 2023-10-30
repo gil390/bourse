@@ -8,6 +8,8 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 from tkinter import *
 from tkscrolledframe import ScrolledFrame
 
+global_envdic = None
+
 def saveToCSV(histo, filename):
     histo.to_csv(filename)
 
@@ -22,8 +24,26 @@ def loadFromYF(ticker, period = '5y'):
     yfticker = yf.Ticker(ticker)
     return yfticker.history(period = period)
 
+class STopLevel(Toplevel):
+    def __init__(self, parent, isin, title):
+        super().__init__(parent)
+        self._isin = isin
+        self.title(title)
+        figure = self.figureCreate()
+        canvas = FigureCanvasTkAgg(figure,
+                               master = self)
+        toolbar = NavigationToolbar2Tk(canvas,
+                                   self)
+        toolbar.update()
+        canvas.get_tk_widget().pack(expand=1, fill="both")
+
+    def figureCreate(self):
+        global global_envdic
+        fig = get_yfinance(self._isin, global_envdic['tmp'])
+        return fig
+
 class SFrame(LabelFrame):
-    def __init__(self, parent, figure, title):
+    def __init__(self, parent, figure, title, isin):
         super().__init__(parent, text = title)
         #self.configure(background='#FF0000')
         canvas = FigureCanvasTkAgg(figure,
@@ -33,11 +53,16 @@ class SFrame(LabelFrame):
         toolbar.update()
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
+        self.bind('<Button-1>', lambda x: STopLevel(parent, isin, title))
+
 class TheApp():
     def __init__(self, ticker_file):
         self._envdic = {
             "tmp" : os.environ['TMPDIR']
         }
+
+        global global_envdic
+        global_envdic = self._envdic
 
         self._window = Tk()
         self._window.resizable(True, True)
@@ -65,7 +90,7 @@ class TheApp():
                 code, nom = row
                 fig = get_yfinance(code, self._envdic['tmp'])
                 if type(fig) != type(None):
-                    sframe = SFrame(inner_frame, fig, f"{code} - {nom}")
+                    sframe = SFrame(inner_frame, fig, f"{code} - {nom}", code)
                     sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
                     numfig += 1
                 else:
