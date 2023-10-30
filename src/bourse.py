@@ -45,6 +45,8 @@ class TheApp():
         self._window.title('Plotting in Tkinter')
         #self._window.geometry("1024x768")
 
+        self.setMenuBar()
+
         # je force un backend qui n est pas Tk
         plt.switch_backend('agg')
 
@@ -71,6 +73,19 @@ class TheApp():
 
         self._window.mainloop()
         plt.close('all')
+
+    def setMenuBar(self):
+        menubar = Menu(self._window)
+        self._window.config(menu=menubar)
+        filemenu = Menu(menubar)
+        filemenu.add_command(
+            label='Exit',
+            command=self._window.destroy
+        )
+        menubar.add_cascade(
+            label="File",
+            menu=filemenu
+        )
 
 # @return current figure
 def get_yfinance(isin_code, tmppath):
