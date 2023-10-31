@@ -118,9 +118,10 @@ class TheApp():
 def get_yfinance(isin_code, tmppath):
     filename = os.path.join(tmppath, f'{isin_code}.csv')
     if os.path.isfile(filename):
-        print('from file')
+        print(f'{isin_code} from file')
         hist = loadFromCSV(filename)
     else:
+        print(f'{isin_code} from internet')
         hist = loadFromYF(isin_code)
         if hist.size == 0:
             return None
