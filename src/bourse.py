@@ -153,6 +153,13 @@ class TheApp():
             self._stockDic[isin]['state'] = new_state
             self.refreshDisplay()
 
+    def dumpDic(self):
+        for isin in self._stockDic:
+            sframe = self._stockDic[isin]['frame']
+            etat = self._stockDic[isin]['state']
+            nom = self._stockDic[isin]['nom']
+            print(f"{isin} / {etat} / {nom} / {sframe}")
+
     def setMenuBar(self):
         menulist = [
             ['Exit', self._window.destroy],
