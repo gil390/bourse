@@ -138,13 +138,20 @@ class TheApp():
         self._stockDic = {}
         plt.close('all')
 
+    def switchVisiIsin(self, isin):
+        if isin in self._stockDic:
+            new_state = not self._stockDic[isin]['state']
+            self._stockDic[isin]['state'] = new_state
+            self.refreshDisplay()
+
     def setMenuBar(self):
         menulist = [
             ['Exit', self._window.destroy],
             ['Widget Childs', lambda: util_fcts.all_children(self._window)],
             ['Frame Forget', self.delAllStockFrames],
             ['Load Tickers', self.loadStockTickers],
-            ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic)],
+            ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
+                self.switchVisiIsin)],
         ]
         menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
