@@ -86,6 +86,15 @@ class TheApp():
 
         self._window.mainloop()
         plt.close('all')
+        self.saveCSV()
+
+    def saveCSV(self):
+        with open(self._ticker_file, 'w', newline='') as csvfile:
+            owrite = csv.writer(csvfile)
+            for isin in self._stockDic:
+                nom = self._stockDic[isin]['nom']
+                etat = "ON" if self._stockDic[isin]['state'] else "OFF"
+                owrite.writerow([isin, nom, etat])
 
     def loadStockTickers(self):
         if len(self._stockDic) > 0:
