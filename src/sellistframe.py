@@ -16,5 +16,5 @@ class SelListWidget(tk.Toplevel):
         for isin in stockinfo:
             state = stockinfo[isin]['state']
             nom = f'{stockinfo[isin]["nom"]} (isin:{isin})'
-            obj = SelListFrame(self, nom, state, lambda: fct(isin))
+            obj = SelListFrame(self, nom, state, lambda x=isin: fct(x))
             obj.pack()
