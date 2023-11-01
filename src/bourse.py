@@ -54,6 +54,9 @@ class TheApp():
         global global_envdic
         global_envdic = self._envdic
 
+        self._ticker_file = ticker_file
+        self._stockFrames = []
+
         self._window = tk.Tk()
         self._window.resizable(True, True)
 
@@ -71,22 +74,37 @@ class TheApp():
         sf = ScrolledFrame(self._window)
         sf.grid(row = 0, column = 0, sticky = "NSEW")
 
-        inner_frame = sf.display_widget(ttk.Frame)
+        self._inner_frame = sf.display_widget(ttk.Frame)
 
+        self.loadStockTickers()
+
+        self._window.mainloop()
+        plt.close('all')
+
+    def loadStockTickers(self):
+        if self._stockFrames and len(self._stockFrames) > 0:
+            self.delAllStockFrames()
+
+        self._stockFrames = []
         numfig = 0
-        with open(ticker_file, newline = '') as csvfile:
+        with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 code, nom = row
                 fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
                 if type(fig) != type(None):
-                    sframe = SFrame(inner_frame, fig, f"{code} - {nom}", code)
+                    sframe = SFrame(self._inner_frame, fig, f"{code} - {nom}", code)
                     sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
+                    self._stockFrames.append(sframe)
                     numfig += 1
                 else:
                     print(f'NO STOCK POUR {code}')
 
-        self._window.mainloop()
+    def delAllStockFrames(self):
+        for i in self._stockFrames:
+            i.grid_forget()
+            i.destroy()
+        self._stockFrames=None
         plt.close('all')
 
     def setMenuBar(self):
@@ -100,6 +118,14 @@ class TheApp():
         filemenu.add_command(
             label='Widget Childs',
             command=lambda: util_fcts.all_children(self._window)
+        )
+        filemenu.add_command(
+            label='Frame Forget',
+            command=self.delAllStockFrames
+        )
+        filemenu.add_command(
+            label='Load Tickers',
+            command=self.loadStockTickers
         )
         menubar.add_cascade(
             label="File",
