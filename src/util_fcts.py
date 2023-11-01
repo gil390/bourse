@@ -34,3 +34,13 @@ def get_yfinance(isin_code, tmppath):
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
     plt = indicator.getTiGraph()
     return plt.gcf()
+
+# Afficher les childs d'un widget
+def all_children(wid, finList=None, indent=0):
+    finList = finList or []
+    print(f"{'   ' * indent}{wid=}")
+    children = wid.winfo_children()
+    for item in children:
+        finList.append(item)
+        all_children(item, finList, indent + 1)
+    return finList

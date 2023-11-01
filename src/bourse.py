@@ -97,6 +97,10 @@ class TheApp():
             label='Exit',
             command=self._window.destroy
         )
+        filemenu.add_command(
+            label='Widget Childs',
+            command=lambda: util_fcts.all_children(self._window)
+        )
         menubar.add_cascade(
             label="File",
             menu=filemenu
