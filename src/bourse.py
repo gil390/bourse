@@ -147,9 +147,7 @@ class TheApp():
     def setMenuBar(self):
         menulist = [
             ['Exit', self._window.destroy],
-            ['Widget Childs', lambda: util_fcts.all_children(self._window)],
-            ['Frame Forget', self.delAllStockFrames],
-            ['Load Tickers', self.loadStockTickers],
+            ['ReLoad Tickers', self.loadStockTickers],
             ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
                 self.switchVisiIsin)],
         ]
