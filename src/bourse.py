@@ -5,7 +5,9 @@ import tti.indicators
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
+
 from tkscrolledframe import ScrolledFrame
 
 global_envdic = None
@@ -24,7 +26,7 @@ def loadFromYF(ticker, period = '5y'):
     yfticker = yf.Ticker(ticker)
     return yfticker.history(period = period)
 
-class STopLevel(Toplevel):
+class STopLevel(tk.Toplevel):
     def __init__(self, parent, isin, title):
         super().__init__(parent)
         self._isin = isin
@@ -43,7 +45,7 @@ class STopLevel(Toplevel):
         fig = get_yfinance(self._isin, global_envdic['tmp'])
         return fig
 
-class SFrame(LabelFrame):
+class SFrame(ttk.LabelFrame):
     def __init__(self, parent, figure, title, isin):
         super().__init__(parent, text = title)
         #self.configure(background='#FF0000')
@@ -66,7 +68,7 @@ class TheApp():
         global global_envdic
         global_envdic = self._envdic
 
-        self._window = Tk()
+        self._window = tk.Tk()
         self._window.resizable(True, True)
 
         self._window.title('Plotting in Tkinter')
@@ -83,7 +85,7 @@ class TheApp():
         sf = ScrolledFrame(self._window)
         sf.grid(row = 0, column = 0, sticky = "NSEW")
 
-        inner_frame = sf.display_widget(Frame)
+        inner_frame = sf.display_widget(ttk.Frame)
 
         numfig = 0
         with open(ticker_file, newline = '') as csvfile:
@@ -102,9 +104,9 @@ class TheApp():
         plt.close('all')
 
     def setMenuBar(self):
-        menubar = Menu(self._window)
+        menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
-        filemenu = Menu(menubar)
+        filemenu = tk.Menu(menubar)
         filemenu.add_command(
             label='Exit',
             command=self._window.destroy
