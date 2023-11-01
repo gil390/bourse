@@ -82,7 +82,7 @@ class TheApp():
 
         self._inner_frame = sf.display_widget(ttk.Frame)
 
-        self.loadStockTickers()
+        self.loadStockTickersLazyFrame()
 
         self._window.mainloop()
         plt.close('all')
@@ -96,7 +96,17 @@ class TheApp():
                 etat = "ON" if self._stockDic[isin]['state'] else "OFF"
                 owrite.writerow([isin, nom, etat])
 
-    def loadStockTickers(self):
+    def getIsinSFrame(self, parent, code, nom):
+        sframe = None
+        fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
+        if type(fig) != type(None):
+            sframe = SFrame(parent, fig, f"{code} - {nom}", code)
+            sframe.grid_forget()
+        else:
+            print(f'NO STOCK POUR {code}')
+        return sframe
+
+    def loadStockTickersLazyFrame(self):
         if len(self._stockDic) > 0:
             self.delAllStockFrames()
 
@@ -110,17 +120,17 @@ class TheApp():
                     etat = False
 
                 if code not in self._stockDic:
-                    fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
-                    if type(fig) != type(None):
-                        sframe = SFrame(self._inner_frame, fig, f"{code} - {nom}", code)
-                        sframe.grid_forget()
-                        self._stockDic[code] = {
-                            'frame':sframe,
-                            'state':etat,
-                            'nom':nom
-                        }
-                    else:
-                        print(f'NO STOCK POUR {code}')
+                    sframe = None
+                    if etat:
+                        sframe = self.getIsinSFrame(self._inner_frame, code, nom)
+                        if not sframe:
+                            etat = False
+
+                    self._stockDic[code] = {
+                        'frame':sframe,
+                        'state':etat,
+                        'nom':nom
+                    }
                 else:
                     print(f'STOCK DEJA EN LISTE POUR {code}')
         self.refreshDisplay()
@@ -129,12 +139,25 @@ class TheApp():
         if len(self._stockDic) > 0:
             # Hide
             for i in self._stockDic:
-                self._stockDic[i]['frame'].grid_forget()
+                frame = self._stockDic[i]['frame']
+                if frame:
+                    frame.grid_forget()
 
             # show
             num = 0
             for i in self._stockDic:
                 if self._stockDic[i]['state']:
+                    if not self._stockDic[i]['frame']:
+                        # Lazy load
+                        code = i
+                        nom = self._stockDic[i]['nom']
+                        frame = self.getIsinSFrame(self._inner_frame, code, nom)
+                        if frame:
+                            self._stockDic[i]['frame'] = frame
+                        else:
+                            self._stockDic[i]['state'] = False
+                            continue
+
                     sframe = self._stockDic[i]['frame']
                     sframe.grid(row = num // 2, column = num % 2, sticky = "NSEW", padx = 4, pady = 4)
                     num += 1
@@ -163,7 +186,7 @@ class TheApp():
     def setMenuBar(self):
         menulist = [
             ['Exit', self._window.destroy],
-            ['ReLoad Tickers', self.loadStockTickers],
+            ['ReLoad Tickers', self.loadStockTickersLazyFrame],
             ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
                 self.switchVisiIsin)],
         ]
