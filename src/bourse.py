@@ -107,7 +107,8 @@ class TheApp():
                         sframe.grid_forget()
                         self._stockDic[code] = {
                             'frame':sframe,
-                            'state':etat
+                            'state':etat,
+                            'nom':nom
                         }
                     else:
                         print(f'NO STOCK POUR {code}')
