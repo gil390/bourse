@@ -7,24 +7,10 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import tkinter as tk
 import tkinter.ttk as ttk
-
+import util_fcts
 from tkscrolledframe import ScrolledFrame
 
 global_envdic = None
-
-def saveToCSV(histo, filename):
-    histo.to_csv(filename)
-
-def loadFromCSV(filename):
-    yfhisto = pd.read_csv(filename)
-    datedf = pd.to_datetime(yfhisto['Date'], utc = True)
-    yfhisto['Date'] = datedf
-    yfhisto.set_index('Date', inplace = True)
-    return yfhisto
-
-def loadFromYF(ticker, period = '5y'):
-    yfticker = yf.Ticker(ticker)
-    return yfticker.history(period = period)
 
 class STopLevel(tk.Toplevel):
     def __init__(self, parent, isin, title):
@@ -92,7 +78,7 @@ class TheApp():
             reader = csv.reader(csvfile)
             for row in reader:
                 code, nom = row
-                fig = get_yfinance(code, self._envdic['tmp'])
+                fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
                 if type(fig) != type(None):
                     sframe = SFrame(inner_frame, fig, f"{code} - {nom}", code)
                     sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
@@ -115,23 +101,5 @@ class TheApp():
             label="File",
             menu=filemenu
         )
-
-# @return current figure
-def get_yfinance(isin_code, tmppath):
-    filename = os.path.join(tmppath, f'{isin_code}.csv')
-    if os.path.isfile(filename):
-        print(f'{isin_code} from file')
-        hist = loadFromCSV(filename)
-    else:
-        print(f'{isin_code} from internet')
-        hist = loadFromYF(isin_code)
-        if hist.size == 0:
-            return None
-        saveToCSV(hist, filename)
-
-    indicator = tti.indicators.IchimokuCloud(hist)
-    # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
-    plt = indicator.getTiGraph()
-    return plt.gcf()
 
 TheApp('tickers.csv')
