@@ -18,3 +18,4 @@ class SelListWidget(tk.Toplevel):
             nom = f'{stockinfo[isin]["nom"]} (isin:{isin})'
             obj = SelListFrame(self, nom, state, lambda x=isin: fct(x))
             obj.pack()
+        self.attributes('-topmost', 'true')
