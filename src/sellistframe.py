@@ -13,7 +13,8 @@ class SelListFrame(tk.Frame):
 class SelListWidget(tk.Toplevel):
     def __init__(self, parent, stockinfo, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        for name in stockinfo:
-            state = stockinfo[name]['state']
-            obj = SelListFrame(self, name, state)
+        for isin in stockinfo:
+            state = stockinfo[isin]['state']
+            nom = f'{stockinfo[isin]["nom"]} (isin:{isin})'
+            obj = SelListFrame(self, nom, state)
             obj.pack()
