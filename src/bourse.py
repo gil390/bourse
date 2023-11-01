@@ -28,7 +28,7 @@ class STopLevel(tk.Toplevel):
     def figureCreate(self):
         # @TODO: global_envdic doit etre une classe singleton
         global global_envdic
-        fig = get_yfinance(self._isin, global_envdic['tmp'])
+        fig = util_fcts.get_yfinance(self._isin, global_envdic['tmp'])
         return fig
 
 class SFrame(ttk.LabelFrame):
