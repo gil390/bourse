@@ -143,7 +143,7 @@ class TheApp():
             ['Widget Childs', lambda: util_fcts.all_children(self._window)],
             ['Frame Forget', self.delAllStockFrames],
             ['Load Tickers', self.loadStockTickers],
-            ['SelList Box', lambda: sellistframe.SelListWidget(self._window)]
+            ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic)],
         ]
         menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
