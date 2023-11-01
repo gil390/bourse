@@ -7,7 +7,10 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import tkinter as tk
 import tkinter.ttk as ttk
+
 import util_fcts
+import sellistframe
+
 from tkscrolledframe import ScrolledFrame
 
 global_envdic = None
@@ -55,7 +58,10 @@ class TheApp():
         global_envdic = self._envdic
 
         self._ticker_file = ticker_file
-        self._stockFrames = []
+
+        # pour chaque entree
+        # 'frame': frame widget associe
+        self._stockDic = {}
 
         self._window = tk.Tk()
         self._window.resizable(True, True)
@@ -82,51 +88,52 @@ class TheApp():
         plt.close('all')
 
     def loadStockTickers(self):
-        if self._stockFrames and len(self._stockFrames) > 0:
+        if len(self._stockDic) > 0:
             self.delAllStockFrames()
 
-        self._stockFrames = []
         numfig = 0
         with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 code, nom = row
-                fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
-                if type(fig) != type(None):
-                    sframe = SFrame(self._inner_frame, fig, f"{code} - {nom}", code)
-                    sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
-                    self._stockFrames.append(sframe)
-                    numfig += 1
+                if code not in self._stockDic:
+                    fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
+                    if type(fig) != type(None):
+                        sframe = SFrame(self._inner_frame, fig, f"{code} - {nom}", code)
+                        sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
+                        self._stockDic[code] = {
+                            'frame':sframe
+                        }
+                        numfig += 1
+                    else:
+                        print(f'NO STOCK POUR {code}')
                 else:
-                    print(f'NO STOCK POUR {code}')
+                    print(f'STOCK DEJA EN LISTE POUR {code}')
 
     def delAllStockFrames(self):
-        for i in self._stockFrames:
-            i.grid_forget()
-            i.destroy()
-        self._stockFrames=None
+        for i in self._stockDic:
+            frame = i['frame']
+            frame.grid_forget()
+            frame.destroy()
+        self._stockDic = {}
         plt.close('all')
 
     def setMenuBar(self):
+        menulist = [
+            ['Exit', self._window.destroy],
+            ['Widget Childs', lambda: util_fcts.all_children(self._window)],
+            ['Frame Forget', self.delAllStockFrames],
+            ['Load Tickers', self.loadStockTickers],
+            ['SelList Box', lambda: sellistframe.SelListWidget(self._window)]
+        ]
         menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
         filemenu = tk.Menu(menubar)
-        filemenu.add_command(
-            label='Exit',
-            command=self._window.destroy
-        )
-        filemenu.add_command(
-            label='Widget Childs',
-            command=lambda: util_fcts.all_children(self._window)
-        )
-        filemenu.add_command(
-            label='Frame Forget',
-            command=self.delAllStockFrames
-        )
-        filemenu.add_command(
-            label='Load Tickers',
-            command=self.loadStockTickers
-        )
+        for i in menulist:
+            filemenu.add_command(
+                label=i[0],
+                command= i[1]
+            )
         menubar.add_cascade(
             label="File",
             menu=filemenu
