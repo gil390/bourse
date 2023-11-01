@@ -91,28 +91,47 @@ class TheApp():
         if len(self._stockDic) > 0:
             self.delAllStockFrames()
 
-        numfig = 0
         with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                code, nom = row
+                code, nom, etat = row
+                if type(etat) == type("") and etat.upper() == 'ON':
+                    etat = True
+                else:
+                    etat = False
+
                 if code not in self._stockDic:
                     fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
                     if type(fig) != type(None):
                         sframe = SFrame(self._inner_frame, fig, f"{code} - {nom}", code)
-                        sframe.grid(row = numfig // 2, column = numfig % 2, sticky = "NSEW", padx = 4, pady = 4)
+                        sframe.grid_forget()
                         self._stockDic[code] = {
-                            'frame':sframe
+                            'frame':sframe,
+                            'state':etat
                         }
-                        numfig += 1
                     else:
                         print(f'NO STOCK POUR {code}')
                 else:
                     print(f'STOCK DEJA EN LISTE POUR {code}')
+        self.refreshDisplay()
+
+    def refreshDisplay(self):
+        if len(self._stockDic) > 0:
+            # Hide
+            for i in self._stockDic:
+                self._stockDic[i]['frame'].grid_forget()
+
+            # show
+            num = 0
+            for i in self._stockDic:
+                if self._stockDic[i]['state']:
+                    sframe = self._stockDic[i]['frame']
+                    sframe.grid(row = num // 2, column = num % 2, sticky = "NSEW", padx = 4, pady = 4)
+                    num += 1
 
     def delAllStockFrames(self):
         for i in self._stockDic:
-            frame = i['frame']
+            frame = self._stockDic[i]['frame']
             frame.grid_forget()
             frame.destroy()
         self._stockDic = {}
