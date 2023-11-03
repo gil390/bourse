@@ -1,7 +1,6 @@
 import sys, os
 import csv
 import yfinance as yf
-import tti.indicators
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
