@@ -17,6 +17,54 @@ def loadFromYF(ticker, period = '5y'):
     yfticker = yf.Ticker(ticker)
     return yfticker.history(period = period)
 
+# @param period 'D' Day, 'W' Week or 'M'Month
+def convertHistToPeriod(hist, period):
+    # hist is:
+    # Open        High         Low       Close  Volume  Dividends  Stock Splits  Capital Gains
+    # Date
+    hist.reset_index(inplace=True)
+    df = hist.groupby([pd.Grouper(key='Date', freq=period)])
+    datelist=[]
+    openlist=[]
+    closelist=[]
+    highlist=[]
+    lowlist=[]
+    volumelist = []
+    dividendslist = []
+    stocklist = []
+    CapGainslist = []
+
+    for elt in df:
+        firstdate = elt[1].iloc[0]['Date']
+        lastdate = elt[1].iloc[-1]['Date']
+        thehigh = elt[1]['High'].max()
+        thelow = elt[1]['Low'].min()
+        theopen = elt[1].loc[elt[1]['Date'] == firstdate, 'Open'].iloc[0]
+        theclose = elt[1].loc[elt[1]['Date'] == lastdate, 'Close'].iloc[0]
+
+        thevolume = elt[1]['Volume'].sum()
+        thedividends = elt[1]['Dividends'].sum()
+        thestock = elt[1]['Stock Splits'].sum()
+        theCapGains = elt[1]['Capital Gains'].sum()
+
+        datelist.append(firstdate)
+        openlist.append(theopen)
+        closelist.append(theclose)
+        highlist.append(thehigh)
+        lowlist.append(thelow)
+        volumelist.append(thevolume)
+        dividendslist.append(thedividends)
+        stocklist.append(thestock)
+        CapGainslist.append(theCapGains)
+
+    hist = pd.DataFrame({'Open':openlist, 'High':highlist,
+        'Low':lowlist, 'Close':closelist, 'Volume':volumelist, 'Dividends':dividendslist,
+        'Stock Splits':stocklist, 'Capital Gains':CapGainslist},
+        index=datelist)
+    hist.rename_axis("Date")
+
+    return hist
+
 # @return current figure
 def get_yfinance(isin_code, tmppath):
     filename = os.path.join(tmppath, f'{isin_code}.csv')
