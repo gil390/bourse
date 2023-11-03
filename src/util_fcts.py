@@ -65,8 +65,9 @@ def convertHistToPeriod(hist, period):
 
     return hist
 
+# @param period 'D' for Day, 'W' for Week, 'M' for Month
 # @return current figure
-def get_yfinance(isin_code, tmppath):
+def get_yfinance(isin_code, tmppath, period = 'D'):
     filename = os.path.join(tmppath, f'{isin_code}.csv')
     if os.path.isfile(filename):
         print(f'{isin_code} from file')
@@ -77,6 +78,10 @@ def get_yfinance(isin_code, tmppath):
         if hist.size == 0:
             return None
         saveToCSV(hist, filename)
+
+    if period != 'D':
+        # conversion des donnees
+        hist = convertHistToPeriod(hist, period)
 
     indicator = tti.indicators.IchimokuCloud(hist)
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
