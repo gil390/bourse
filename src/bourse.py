@@ -6,8 +6,8 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import tkinter as tk
 import tkinter.ttk as ttk
+import utils
 
-import utils.util_fcts as util_fcts
 import sellistframe
 
 from tkscrolledframe import ScrolledFrame
@@ -30,7 +30,7 @@ class STopLevel(tk.Toplevel):
     def figureCreate(self):
         # @TODO: global_envdic doit etre une classe singleton
         global global_envdic
-        fig = util_fcts.get_yfinance(self._isin, global_envdic['tmp'])
+        fig = utils.get_yfinance(self._isin, global_envdic['tmp'])
         return fig
 
 class SFrame(ttk.LabelFrame):
@@ -105,7 +105,7 @@ class TheApp():
 
     def getIsinSFrame(self, parent, code, nom):
         sframe = None
-        fig = util_fcts.get_yfinance(code, self._envdic['tmp'])
+        fig = utils.get_yfinance(code, self._envdic['tmp'])
         if type(fig) != type(None):
             sframe = SFrame(parent, fig, f"{code} - {nom}", code)
             sframe.grid_forget()
@@ -171,7 +171,7 @@ class TheApp():
 
     def cleanAllIsinCache(self):
         for i in self._stockDic:
-            util_fcts.cleanIsInCache(global_envdic['tmp'], i)
+            utils.cleanIsInCache(global_envdic['tmp'], i)
         self.delAllStockFrame()
 
     def delAllStockFrame(self):
