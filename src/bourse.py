@@ -8,6 +8,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import utils
 import sellistframe
+import datetime
 
 from tkscrolledframe import ScrolledFrame
 
@@ -111,6 +112,10 @@ class TheApp():
                 else:
                     etat = False
 
+                # verification clean anciens fichiers ISIN CSV
+                if self._config.cfg('auto_del_isin_csv') == True:
+                    self.deloldisinfiles(code)
+
                 if code not in self._stockDic:
                     sframe = None
                     if etat:
@@ -202,5 +207,19 @@ class TheApp():
             label="File",
             menu=filemenu
         )
+
+    def deloldisinfiles(self, isin_code):
+        today = datetime.date.today()
+
+        for r, d, f in os.walk(self._config.get_temp_path()):
+            for name in f:
+                if isin_code.lower() in name.lower():
+                    _, e = os.path.splitext(name)
+                    if '.csv' == e.lower():
+                        fname = os.path.join(r, name)
+                        modifdate = os.path.getmtime(fname) # modifdate is a float
+                        modifdate = datetime.date.fromtimestamp(modifdate)
+                        if (today - modifdate).total_seconds() != 0:
+                            os.remove(fname)
 
 TheApp('tickers.csv')
