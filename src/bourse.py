@@ -186,10 +186,10 @@ class TheApp():
 
     def setMenuBar(self):
         menulist = [
-            ['Exit', self._window.destroy],
-            ['ReLoad Tickers', self.loadStockTickersLazyFrame],
-            ['SelList Box', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
+            ['Recharger tous ISIN', self.loadStockTickersLazyFrame],
+            ['Selection ISIN', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
                 self.switchVisiIsin)],
+            ['Exit', self._window.destroy],
         ]
         menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
