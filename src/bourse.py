@@ -107,7 +107,7 @@ class TheApp():
 
     def loadStockTickersLazyFrame(self):
         if len(self._stockDic) > 0:
-            self.delAllStockFrames()
+            self.delAllStockFrame()
 
         with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
@@ -161,12 +161,14 @@ class TheApp():
                     sframe.grid(row = num // 2, column = num % 2, sticky = "NSEW", padx = 4, pady = 4)
                     num += 1
 
-    def delAllStockFrames(self):
+    def delAllStockFrame(self):
         for i in self._stockDic:
             frame = self._stockDic[i]['frame']
-            frame.grid_forget()
-            frame.destroy()
-        self._stockDic = {}
+            if frame:
+                frame.grid_forget()
+                frame.destroy()
+                frame = None
+            self._stockDic[i]['state'] = False
         plt.close('all')
 
     def switchVisiIsin(self, isin):
