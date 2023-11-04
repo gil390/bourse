@@ -36,6 +36,11 @@ class Config(Singleton_base):
     def get_temp_path(self):
         return self._tmppath
 
+    def cfg(self, name):
+        if name not in self._config:
+            return None
+        return self._config[name]
+
     def writeConfig(self):
         if self._config:
             # ecriture de la configuration
