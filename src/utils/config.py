@@ -21,7 +21,20 @@ class Config(Singleton_base):
         self._config = None
         print(f'Config file = {self._config_file_path}')
 
+        # Temporary Directory
+        defaulttmppath = os.path.join(os.path.dirname( \
+            os.path.dirname(__main__.__file__)), 'tmp')
+
+        self._tmppath = os.getenv('TMPDIR', defaulttmppath)
+        if not os.path.exists(self._tmppath):
+            os.makedirs(self._tmppath)
+
+        print(f'Temp Dir is: {self._tmppath}')
+
         self.loadConfig()
+
+    def get_temp_path(self):
+        return self._tmppath
 
     def writeConfig(self):
         if self._config:

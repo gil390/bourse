@@ -11,8 +11,6 @@ import sellistframe
 
 from tkscrolledframe import ScrolledFrame
 
-global_envdic = None
-
 class STopLevel(tk.Toplevel):
     def __init__(self, parent, isin, title):
         super().__init__(parent)
@@ -27,9 +25,8 @@ class STopLevel(tk.Toplevel):
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
     def figureCreate(self):
-        # @TODO: global_envdic doit etre une classe singleton
-        global global_envdic
-        fig = utils.get_yfinance(self._isin, global_envdic['tmp'])
+        fig = utils.get_yfinance(self._isin, \
+            utils.Config().get_temp_path())
         return fig
 
 class SFrame(ttk.LabelFrame):
@@ -49,21 +46,6 @@ class TheApp():
     def __init__(self, ticker_file):
 
         self._config = utils.Config()
-
-        script_dir = os.path.dirname(__file__)
-        defaulttmppath = os.path.join(os.path.dirname(script_dir), 'tmp')
-
-        if not os.path.exists(defaulttmppath):
-            os.makedirs(defaulttmppath)
-
-        self._envdic = {
-            "tmp" : os.getenv('TMPDIR', defaulttmppath)
-        }
-        print(f'Temp Dir is: {self._envdic["tmp"]}')
-
-        # @TODO a transformer en une classe singleton
-        global global_envdic
-        global_envdic = self._envdic
 
         self._ticker_file = ticker_file
 
@@ -108,7 +90,7 @@ class TheApp():
 
     def getIsinSFrame(self, parent, code, nom):
         sframe = None
-        fig = utils.get_yfinance(code, self._envdic['tmp'])
+        fig = utils.get_yfinance(code, self._config.get_temp_path())
         if type(fig) != type(None):
             sframe = SFrame(parent, fig, f"{code} - {nom}", code)
             sframe.grid_forget()
@@ -174,7 +156,7 @@ class TheApp():
 
     def cleanAllIsinCache(self):
         for i in self._stockDic:
-            utils.cleanIsInCache(global_envdic['tmp'], i)
+            utils.cleanIsInCache(self._config.get_temp_path(), i)
         self.delAllStockFrame()
 
     def delAllStockFrame(self):
