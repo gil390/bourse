@@ -161,6 +161,11 @@ class TheApp():
                     sframe.grid(row = num // 2, column = num % 2, sticky = "NSEW", padx = 4, pady = 4)
                     num += 1
 
+    def cleanAllIsinCache(self):
+        for i in self._stockDic:
+            util_fcts.cleanIsInCache(global_envdic['tmp'], i)
+        self.delAllStockFrame()
+
     def delAllStockFrame(self):
         for i in self._stockDic:
             frame = self._stockDic[i]['frame']
@@ -189,6 +194,7 @@ class TheApp():
             ['Recharger tous ISIN', self.loadStockTickersLazyFrame],
             ['Selection ISIN', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
                 self.switchVisiIsin)],
+            ['Effacer les fichiers en cache', self.cleanAllIsinCache],
             ['Exit', self._window.destroy],
         ]
         menubar = tk.Menu(self._window)

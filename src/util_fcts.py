@@ -17,6 +17,14 @@ def loadFromYF(ticker, period = '5y'):
     yfticker = yf.Ticker(ticker)
     return yfticker.history(period = period)
 
+def cleanIsInCache(tmppath, isin_code):
+    filename = os.path.join(tmppath, f'{isin_code}.csv')
+    if os.path.isfile(filename):
+        try:
+            os.remove(filename)
+        except:
+            print(f'Echec effacement {filename}')
+
 # @param period 'D' Day, 'W' Week or 'M'Month
 def convertHistToPeriod(hist, period):
     # hist is:
