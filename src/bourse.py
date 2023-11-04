@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import util_fcts
+import utils.util_fcts as util_fcts
 import sellistframe
 
 from tkscrolledframe import ScrolledFrame
