@@ -48,9 +48,16 @@ class SFrame(ttk.LabelFrame):
 
 class TheApp():
     def __init__(self, ticker_file):
+        script_dir = os.path.dirname(__file__)
+        defaulttmppath = os.path.join(os.path.dirname(script_dir), 'tmp')
+
+        if not os.path.exists(defaulttmppath):
+            os.makedirs(defaulttmppath)
+
         self._envdic = {
-            "tmp" : os.environ['TMPDIR']
+            "tmp" : os.getenv('TMPDIR', defaulttmppath)
         }
+        print(f'Temp Dir is: {self._envdic["tmp"]}')
 
         # @TODO a transformer en une classe singleton
         global global_envdic
