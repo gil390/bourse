@@ -64,9 +64,10 @@ class TheApp():
 
         self._window = tk.Tk()
         self._window.resizable(True, True)
+        w, h = self._window.winfo_screenwidth(), self._window.winfo_screenheight()
+        self._window.geometry("%dx%d+0+0" % (w, h))
 
         self._window.title('Plotting in Tkinter')
-        #self._window.geometry("1024x768")
 
         self.setMenuBar()
 
