@@ -7,7 +7,6 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 import tkinter as tk
 import tkinter.ttk as ttk
 import utils
-
 import sellistframe
 
 from tkscrolledframe import ScrolledFrame
@@ -48,6 +47,9 @@ class SFrame(ttk.LabelFrame):
 
 class TheApp():
     def __init__(self, ticker_file):
+
+        self._config = utils.Config()
+
         script_dir = os.path.dirname(__file__)
         defaulttmppath = os.path.join(os.path.dirname(script_dir), 'tmp')
 
@@ -94,6 +96,7 @@ class TheApp():
         self._window.mainloop()
         plt.close('all')
         self.saveCSV()
+        self._config.writeConfig()
 
     def saveCSV(self):
         with open(self._ticker_file, 'w', newline='') as csvfile:
