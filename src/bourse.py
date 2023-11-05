@@ -25,6 +25,7 @@ class STopLevel(tk.Toplevel):
                                    self)
         toolbar.update()
         canvas.get_tk_widget().pack(expand=1, fill="both")
+        self.attributes('-topmost', 'true')
 
     def figureCreate(self, period, loadperiod = '5y'):
         fig = utils.get_yfinance(self._isin, \
@@ -44,16 +45,18 @@ class SFrame(ttk.LabelFrame):
 
 
         self.popup_menu = tk.Menu(self, tearoff=0)
+        self.popup_menu.add_command(label="Jour",
+                                    command=lambda: STopLevel( \
+                                    parent, isin, title + ' - Jour', 'D', \
+                                    load_period))
         self.popup_menu.add_command(label="Semaine",
                                     command=lambda: STopLevel( \
-                                    parent, isin, title + ' - Week', 'W', \
+                                    parent, isin, title + ' - Semaine', 'W', \
                                     load_period))
         self.popup_menu.add_command(label="Mois",
                                     command=lambda: STopLevel( \
-                                    parent, isin, title + ' - Month', 'M', \
+                                    parent, isin, title + ' - Mois', 'M', \
                                     load_period))
-
-        self.bind('<Button-1>', lambda x: STopLevel(parent, isin, title))
         self.bind("<Button-3>", self.popup)
 
     def WeekShow(self):
@@ -116,12 +119,13 @@ class TheApp():
             for isin in self._stockDic:
                 nom = self._stockDic[isin]['nom']
                 etat = "ON" if self._stockDic[isin]['state'] else "OFF"
-                owrite.writerow([isin, nom, etat])
+                periode = self._stockDic[isin]['periode']
+                owrite.writerow([isin, nom, etat, periode])
 
-    def getIsinSFrame(self, parent, code, nom):
+    def getIsinSFrame(self, parent, code, nom, periode):
         sframe = None
         fig = utils.get_yfinance(code, self._config.get_temp_path(), \
-            'D', self._config.cfg('load_period'))
+            periode, self._config.cfg('load_period'))
         if type(fig) != type(None):
             sframe = SFrame(parent, fig, f"{code} - {nom}", code, \
              self._config.cfg('load_period'))
@@ -139,7 +143,7 @@ class TheApp():
         with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                code, nom, etat = row
+                code, nom, etat, periode = row
                 if type(etat) == type("") and etat.upper() == 'ON':
                     etat = True
                 else:
@@ -152,14 +156,16 @@ class TheApp():
                 if code not in self._stockDic:
                     sframe = None
                     if etat:
-                        sframe = self.getIsinSFrame(self._inner_frame, code, nom)
+                        sframe = self.getIsinSFrame(self._inner_frame, \
+                            code, nom, periode)
                         if not sframe:
                             etat = False
 
                     self._stockDic[code] = {
                         'frame':sframe,
                         'state':etat,
-                        'nom':nom
+                        'nom':nom,
+                        'periode':periode,
                     }
                 else:
                     print(f'STOCK DEJA EN LISTE POUR {code}')
@@ -181,7 +187,9 @@ class TheApp():
                         # Lazy load
                         code = i
                         nom = self._stockDic[i]['nom']
-                        frame = self.getIsinSFrame(self._inner_frame, code, nom)
+                        periode = self._stockDic[i]['periode']
+                        frame = self.getIsinSFrame(self._inner_frame, \
+                            code, nom, periode)
                         if frame:
                             self._stockDic[i]['frame'] = frame
                         else:
@@ -218,7 +226,8 @@ class TheApp():
             sframe = self._stockDic[isin]['frame']
             etat = self._stockDic[isin]['state']
             nom = self._stockDic[isin]['nom']
-            print(f"{isin} / {etat} / {nom} / {sframe}")
+            periode = self._stockDic[isin]['periode']
+            print(f"{isin} / {etat} / {nom} / {sframe} / {periode}")
 
     def setMenuBar(self):
         menulist = [
