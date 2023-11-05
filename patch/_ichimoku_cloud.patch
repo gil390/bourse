@@ -1,8 +1,8 @@
-@@ -2408,23 +2408,8 @@
- u_b'
--, 'chikou_span'
- %5D,%0A 
-@@ -3282,74 +3282,8 @@
- 6)%0A%0A
--        ic%5B'chikou_span'%5D = self._input_data%5B'close'%5D.shift(-26)%0A%0A
-     
+@@ -2404,16 +2404,31 @@
+ enkou_b'
++, 'chikou_span'
+ %5D,%0A     
+@@ -3285,32 +3285,98 @@
+      shift(26)%0A%0A
++        ic%5B'chikou_span'%5D = self._input_data%5B'close'%5D.shift(-26)%0A%0A
+         return i

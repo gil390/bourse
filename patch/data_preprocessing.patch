@@ -1,9 +1,9 @@
-@@ -880,33 +880,32 @@
+@@ -880,32 +880,33 @@
  atters)%0A        
--#
++#
  data.fillna(meth
-@@ -948,97 +948,30 @@
+@@ -949,30 +949,97 @@
  ta.f
--fill(inplace=True)%0A        #data.fillna(method='bfill', inplace=True)%0A        data.bfill(
-+illna(method='bfill', 
+-illna(method='bfill', 
++fill(inplace=True)%0A        #data.fillna(method='bfill', inplace=True)%0A        data.bfill(
  inpl
