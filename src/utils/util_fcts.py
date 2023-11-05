@@ -1,4 +1,4 @@
-import os
+import os, sys
 import yfinance as yf
 import pandas as pd
 import tti.indicators
@@ -105,3 +105,6 @@ def all_children(wid, finList=None, indent=0):
         finList.append(item)
         all_children(item, finList, indent + 1)
     return finList
+
+def DEBUG_LINE():
+    return sys._getframe(1).f_lineno
