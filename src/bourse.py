@@ -14,11 +14,11 @@ from tickerscsveditor import TickersCsvEditor
 from tkscrolledframe import ScrolledFrame
 
 class STopLevel(tk.Toplevel):
-    def __init__(self, parent, isin, title):
+    def __init__(self, parent, isin, title, period='D'):
         super().__init__(parent)
         self._isin = isin
         self.title(title)
-        figure = self.figureCreate()
+        figure = self.figureCreate(period)
         canvas = FigureCanvasTkAgg(figure,
                                master = self)
         toolbar = NavigationToolbar2Tk(canvas,
@@ -26,9 +26,9 @@ class STopLevel(tk.Toplevel):
         toolbar.update()
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
-    def figureCreate(self):
+    def figureCreate(self, period):
         fig = utils.get_yfinance(self._isin, \
-            utils.Config().get_temp_path())
+            utils.Config().get_temp_path(), period)
         return fig
 
 class SFrame(ttk.LabelFrame):
@@ -42,7 +42,29 @@ class SFrame(ttk.LabelFrame):
         toolbar.update()
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
+
+        self.popup_menu = tk.Menu(self, tearoff=0)
+        self.popup_menu.add_command(label="Semaine",
+                                    command=lambda: STopLevel( \
+                                    parent, isin, title + ' - Week', 'W'))
+        self.popup_menu.add_command(label="Mois",
+                                    command=lambda: STopLevel( \
+                                    parent, isin, title + ' - Month', 'M'))
+
         self.bind('<Button-1>', lambda x: STopLevel(parent, isin, title))
+        self.bind("<Button-3>", self.popup)
+
+    def WeekShow(self):
+        pass
+
+    def MonthShow(self):
+        pass
+
+    def popup(self, event):
+        try:
+            self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+        finally:
+            self.popup_menu.grab_release()
 
 class TheApp():
     def __init__(self):
