@@ -104,6 +104,8 @@ class TheApp():
         if len(self._stockDic) > 0:
             self.delAllStockFrame()
 
+        self._stockDic={}
+
         with open(self._ticker_file, newline = '') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
@@ -163,7 +165,7 @@ class TheApp():
     def cleanAllIsinCache(self):
         for i in self._stockDic:
             utils.cleanIsInCache(self._config.get_temp_path(), i)
-        self.delAllStockFrame()
+        self.loadStockTickersLazyFrame()
 
     def delAllStockFrame(self):
         for i in self._stockDic:
@@ -171,7 +173,7 @@ class TheApp():
             if frame:
                 frame.grid_forget()
                 frame.destroy()
-                frame = None
+                self._stockDic[i]['frame'] = None
             self._stockDic[i]['state'] = False
         plt.close('all')
 
