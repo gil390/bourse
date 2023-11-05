@@ -21,11 +21,12 @@ elif sys.argv[1] == 'D':
     else:
         print(f'Error {sys.argv[4]} exists')
 elif sys.argv[1] == 'P':
-    if len(sys.argv) != 5:
+    if len(sys.argv) < 5:
         print('arg2: file to patch')
         print('arg3: patch')
         print('arg4: file output')
-    elif not os.path.exists(sys.argv[4]):
+        print('arg5: -f to force write')
+    elif not os.path.exists(sys.argv[4]) or (len(sys.argv) == 6 and sys.argv[5] == '-f'):
         f1 = open(sys.argv[2], 'r').read()
         f2 = open(sys.argv[3], 'r').read()
 
