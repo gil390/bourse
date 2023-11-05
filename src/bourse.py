@@ -9,6 +9,7 @@ import tkinter.ttk as ttk
 import utils
 import sellistframe
 import datetime
+from tickerscsveditor import TickersCsvEditor
 
 from tkscrolledframe import ScrolledFrame
 
@@ -193,6 +194,8 @@ class TheApp():
             ['Selection ISIN', lambda: sellistframe.SelListWidget(self._window, self._stockDic,
                 self.switchVisiIsin)],
             ['Effacer les fichiers en cache', self.cleanAllIsinCache],
+            ['Mise à jour ISIN', lambda: TickersCsvEditor(self._window, \
+                self._ticker_file)],
             ['Exit', self._window.destroy],
         ]
         menubar = tk.Menu(self._window)
