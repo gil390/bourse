@@ -14,11 +14,11 @@ from tickerscsveditor import TickersCsvEditor
 from tkscrolledframe import ScrolledFrame
 
 class STopLevel(tk.Toplevel):
-    def __init__(self, parent, isin, title, period='D'):
+    def __init__(self, parent, isin, title, period='D', load_period = '5y'):
         super().__init__(parent)
         self._isin = isin
         self.title(title)
-        figure = self.figureCreate(period)
+        figure = self.figureCreate(period, load_period)
         canvas = FigureCanvasTkAgg(figure,
                                master = self)
         toolbar = NavigationToolbar2Tk(canvas,
@@ -26,13 +26,13 @@ class STopLevel(tk.Toplevel):
         toolbar.update()
         canvas.get_tk_widget().pack(expand=1, fill="both")
 
-    def figureCreate(self, period):
+    def figureCreate(self, period, loadperiod = '5y'):
         fig = utils.get_yfinance(self._isin, \
-            utils.Config().get_temp_path(), period)
+            utils.Config().get_temp_path(), period, loadperiod)
         return fig
 
 class SFrame(ttk.LabelFrame):
-    def __init__(self, parent, figure, title, isin):
+    def __init__(self, parent, figure, title, isin, load_period):
         super().__init__(parent, text = title)
         #self.configure(background='#FF0000')
         canvas = FigureCanvasTkAgg(figure,
@@ -46,10 +46,12 @@ class SFrame(ttk.LabelFrame):
         self.popup_menu = tk.Menu(self, tearoff=0)
         self.popup_menu.add_command(label="Semaine",
                                     command=lambda: STopLevel( \
-                                    parent, isin, title + ' - Week', 'W'))
+                                    parent, isin, title + ' - Week', 'W', \
+                                    load_period))
         self.popup_menu.add_command(label="Mois",
                                     command=lambda: STopLevel( \
-                                    parent, isin, title + ' - Month', 'M'))
+                                    parent, isin, title + ' - Month', 'M', \
+                                    load_period))
 
         self.bind('<Button-1>', lambda x: STopLevel(parent, isin, title))
         self.bind("<Button-3>", self.popup)
@@ -118,9 +120,11 @@ class TheApp():
 
     def getIsinSFrame(self, parent, code, nom):
         sframe = None
-        fig = utils.get_yfinance(code, self._config.get_temp_path())
+        fig = utils.get_yfinance(code, self._config.get_temp_path(), \
+            'D', self._config.cfg('load_period'))
         if type(fig) != type(None):
-            sframe = SFrame(parent, fig, f"{code} - {nom}", code)
+            sframe = SFrame(parent, fig, f"{code} - {nom}", code, \
+             self._config.cfg('load_period'))
             sframe.grid_forget()
         else:
             print(f'NO STOCK POUR {code}')
