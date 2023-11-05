@@ -1,1 +1,2 @@
-{"auto_del_isin_csv": true,"tickers_file_name":"./tickers.csv"}
+{"auto_del_isin_csv": true, "tickers_file_name": "./tickers.csv",
+    "load_period":"10y"}

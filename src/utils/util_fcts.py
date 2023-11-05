@@ -74,15 +74,16 @@ def convertHistToPeriod(hist, period):
     return hist
 
 # @param period 'D' for Day, 'W' for Week, 'M' for Month
+# @param load_period period to load from yfinance '5y' = 5 years
 # @return current figure
-def get_yfinance(isin_code, tmppath, period = 'D'):
+def get_yfinance(isin_code, tmppath, period = 'D', load_period = '5y'):
     filename = os.path.join(tmppath, f'{isin_code}.csv')
     if os.path.isfile(filename):
         print(f'{isin_code} from file')
         hist = loadFromCSV(filename)
     else:
         print(f'{isin_code} from internet')
-        hist = loadFromYF(isin_code)
+        hist = loadFromYF(isin_code, period = load_period)
         if hist.size == 0:
             return None
         saveToCSV(hist, filename)
