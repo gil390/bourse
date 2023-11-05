@@ -119,15 +119,17 @@ class TickersCsvEditorFrame(Frame):
             tmp.insert(1.0, "ISIN")
         elif j == 1:
             tmp.insert(1.0, "NOM")
-        else:
+        elif j == 2:
             tmp.insert(1.0, "ON/OFF")
+        else:
+            tmp.insert(1.0, "Periode (D,W,M)")
         tmp['state'] = DISABLED
         tmp.config(font=("Helvetica", 10, tkFont.BOLD))
         tmp.config(relief=FLAT, background = 'lightgray')
 
     def createDefaultWidgets(self):
         w, h = 7, 1
-        self.sizeX = 3
+        self.sizeX = 4
         self.sizeY = 6
         defaultCells = []
         for i in range(self.sizeY):
@@ -179,7 +181,7 @@ class TickersCsvEditorFrame(Frame):
 
     def add_row(self):
         self._currentCells.append([])
-        for j in range(3):
+        for j in range(4):
             self._currentCells[-1].append([])
             tmp = Text(self, width=self._width, height=self._height)
             tmp.bind("<Tab>", self.focus_tab)
@@ -218,7 +220,7 @@ class TickersCsvEditorFrame(Frame):
             for row in rd:
                 ary.append([])
                 col = len(row)
-                if col != 3:
+                if col != 4:
                     print('ERROR tickers.csv file column error')
                 rows.append(row)
 
