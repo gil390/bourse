@@ -45,11 +45,15 @@ class SFrame(ttk.LabelFrame):
         self.bind('<Button-1>', lambda x: STopLevel(parent, isin, title))
 
 class TheApp():
-    def __init__(self, ticker_file):
+    def __init__(self):
 
         self._config = utils.Config()
 
-        self._ticker_file = ticker_file
+        self._ticker_file = self._config.cfg("tickers_file_name")
+        print(f'Tickers file : {self._ticker_file}')
+        if not os.path.exists(self._ticker_file):
+            # creation d un sample de fichier csv
+            utils.create_tickers_csv_sample(self._ticker_file)
 
         # pour chaque entree
         # 'frame': frame widget associe
@@ -227,4 +231,4 @@ class TheApp():
                         if (today - modifdate).total_seconds() != 0:
                             os.remove(fname)
 
-TheApp('tickers.csv')
+TheApp()

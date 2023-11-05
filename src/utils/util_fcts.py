@@ -106,5 +106,9 @@ def all_children(wid, finList=None, indent=0):
         all_children(item, finList, indent + 1)
     return finList
 
+def create_tickers_csv_sample(ticker_file):
+    with open(ticker_file, "w") as fobj:
+        fobj.write("QS0009080720,AMUNDI LABEL MONETAIRE ESR - F,ON\n")
+
 def DEBUG_LINE():
     return sys._getframe(1).f_lineno
