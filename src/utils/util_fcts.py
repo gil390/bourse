@@ -92,7 +92,17 @@ def get_yfinance(isin_code, tmppath, period = 'D', load_period = '5y'):
         # conversion des donnees
         hist = convertHistToPeriod(hist, period)
 
+    if period == 'D':
+        period_string = 'Jour'
+    elif period == 'W':
+        period_string = 'Semaine'
+    elif period == 'M':
+        period_string = 'Mois'
+    else:
+        period_string = 'période inconnue'
+
     indicator = tti.indicators.IchimokuCloud(hist)
+    indicator._properties['long_name'] = f'{isin_code} - {period_string}'
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
     plt = indicator.getTiGraph()
     return plt.gcf()
