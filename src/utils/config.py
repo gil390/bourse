@@ -55,6 +55,11 @@ class Config(Singleton_base):
             print(f'Pas d ecriture de fichier de conf dans {self._config_file_path}')
 
     def loadConfig(self):
+        check = {
+            'auto_del_isin_csv': (True, None),
+            'tickers_file_name': ('./tickers.csv', None),
+            'load_period':('10y', None),
+            }
         try:
             with open(self._config_file_path, 'r') as ofile:
                 buf = ofile.read()
@@ -64,5 +69,9 @@ class Config(Singleton_base):
             print(f'Pas de Fichier conf charge de {self._config_file_path}')
         if not self._config:
             self._config = {}
-        if 'auto_del_isin_csv' not in self._config:
-            self._config['auto_del_isin_csv'] = True
+        for i in check:
+            default, checkcondition =check[i]
+            if i not in self._config:
+                self._config[i] = default
+            elif checkcondition:
+                self._config[i] = checkcondition(self._config[i])
