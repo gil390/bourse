@@ -1,13 +1,9 @@
-@@ -29,8 +29,10 @@
-         data = input_data.sort_index(ascending=True)
-     
-         # First fill forward and the backward (order matters)
--        data.fillna(method='ffill', inplace=True)
--        data.fillna(method='bfill', inplace=True)
-+        #data.fillna(method='ffill', inplace=True)
-+        data.ffill(inplace=True)
-+        #data.fillna(method='bfill', inplace=True)
-+        data.bfill(inplace=True)
- 
-     else:
-         raise TypeError('Invalid input_data type. It was expected ' +
+@@ -880,33 +880,32 @@
+ atters)%0A        
+-#
+ data.fillna(meth
+@@ -948,97 +948,30 @@
+ ta.f
+-fill(inplace=True)%0A        #data.fillna(method='bfill', inplace=True)%0A        data.bfill(
++illna(method='bfill', 
+ inpl
