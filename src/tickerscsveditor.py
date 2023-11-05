@@ -307,9 +307,10 @@ class TickersCsvEditorFrame(Frame):
                 if validity:
                     csvfile.write(row + "\n")
 
-        tkMessageBox.showinfo("", "Sauvegardé !")
+        tkMessageBox.showinfo("", "Sauvegardé !", parent=self)
 
 class TickersCsvEditor(Toplevel):
     def __init__(self, master, csvfilename, cnf={}):
         super().__init__(master, cnf)
         self._frame = TickersCsvEditorFrame(self, csvfilename)
+        self.attributes('-topmost', 'true')
