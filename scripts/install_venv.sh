@@ -6,3 +6,4 @@ ${PYVENV_DIR}/bin/pip install pandas
 ${PYVENV_DIR}/bin/pip install yfinance
 ${PYVENV_DIR}/bin/pip install tti
 ${PYVENV_DIR}/bin/pip install tkscrolledframe
+${PYVENV_DIR}/bin/pip install diff-match-patch
