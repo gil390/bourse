@@ -1,18 +1,8 @@
-@@ -62,7 +62,7 @@
-         # Build the indicator's dataframe
-         ic = pd.DataFrame(
-             index=self._input_data.index,
--            columns=['tenkan_sen', 'kijun_sen', 'senkou_a', 'senkou_b'],
-+            columns=['tenkan_sen', 'kijun_sen', 'senkou_a', 'senkou_b', 'chikou_span'],
-             data=None)
- 
-         ic['tenkan_sen'] = (self._input_data['high'].
-@@ -83,6 +83,8 @@
-                            rolling(window=52, min_periods=1).min()) / 2).\
-             shift(26)
- 
-+        ic['chikou_span'] = self._input_data['close'].shift(-26)
-+
-         return ic.round(4)
- 
-     @staticmethod
+@@ -2404,16 +2404,31 @@
+ enkou_b'
++, 'chikou_span'
+ %5D,%0A     
+@@ -3285,32 +3285,98 @@
+      shift(26)%0A%0A
++        ic%5B'chikou_span'%5D = self._input_data%5B'close'%5D.shift(-26)%0A%0A
+         return i
