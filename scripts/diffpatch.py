@@ -33,6 +33,7 @@ elif sys.argv[1] == 'P':
         dmp = diff_match_patch()
         patches = dmp.patch_fromText(f2)
         new_text, status = dmp.patch_apply(patches, f1)
+        print(f'Status = {status}')
         if False in status:
             print('Patch failed')
         else:
