@@ -18,6 +18,7 @@ class STopLevel(tk.Toplevel):
         super().__init__(parent)
         self._isin = isin
         self.title(title)
+        self._title = title
         figure = self.figureCreate(period, load_period)
         canvas = FigureCanvasTkAgg(figure,
                                master = self)
@@ -28,7 +29,7 @@ class STopLevel(tk.Toplevel):
         self.attributes('-topmost', 'true')
 
     def figureCreate(self, period, loadperiod = '5y'):
-        fig = utils.get_yfinance(self._isin, \
+        fig = utils.get_yfinance(self._isin, self._title, \
             utils.Config().get_temp_path(), period, loadperiod)
         return fig
 
@@ -124,7 +125,7 @@ class TheApp():
 
     def getIsinSFrame(self, parent, code, nom, periode):
         sframe = None
-        fig = utils.get_yfinance(code, self._config.get_temp_path(), \
+        fig = utils.get_yfinance(code, nom, self._config.get_temp_path(), \
             periode, self._config.cfg('load_period'))
         if type(fig) != type(None):
             sframe = SFrame(parent, fig, f"{code} - {nom}", code, \

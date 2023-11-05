@@ -76,7 +76,7 @@ def convertHistToPeriod(hist, period):
 # @param period 'D' for Day, 'W' for Week, 'M' for Month
 # @param load_period period to load from yfinance '5y' = 5 years
 # @return current figure
-def get_yfinance(isin_code, tmppath, period = 'D', load_period = '5y'):
+def get_yfinance(isin_code, nom, tmppath, period = 'D', load_period = '5y'):
     filename = os.path.join(tmppath, f'{isin_code}.csv')
     if os.path.isfile(filename):
         print(f'{isin_code} from file')
@@ -102,7 +102,7 @@ def get_yfinance(isin_code, tmppath, period = 'D', load_period = '5y'):
         period_string = 'période inconnue'
 
     indicator = tti.indicators.IchimokuCloud(hist)
-    indicator._properties['long_name'] = f'{isin_code} - {period_string}'
+    indicator._properties['long_name'] = f'{nom} \n {isin_code} - {period_string}'
     # print(f"Signal for {sys.argv[1]} : {indicator.getTiSignal()}")
     plt = indicator.getTiGraph()
     return plt.gcf()
