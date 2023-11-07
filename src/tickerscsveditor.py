@@ -40,7 +40,7 @@ class TickersCsvEditorFrame(Frame):
         menubar.add_cascade(label="File", menu=filemenu)
         #menubar.add_command(label="Exit", command=self.quit)
 
-        self.master.title('Tickers.csv Editor')
+        self.master.title('Tickers.csv Editor - Alt+Flèche pour changer de cellule')
         self.master.config(menu=menubar)
 
         default_font = tkFont.nametofont("TkTextFont")
@@ -144,10 +144,10 @@ class TickersCsvEditorFrame(Frame):
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
                 tmp.bind("<Return>", self.focus_down)
                 tmp.bind("<Shift-Return>", self.focus_up)
-                tmp.bind("<Right>", self.focus_right)
-                tmp.bind("<Left>", self.focus_left)
-                tmp.bind("<Up>", self.focus_up)
-                tmp.bind("<Down>", self.focus_down)
+                tmp.bind("<Alt-Right>", self.focus_right)
+                tmp.bind("<Alt-Left>", self.focus_left)
+                tmp.bind("<Alt-Up>", self.focus_up)
+                tmp.bind("<Alt-Down>", self.focus_down)
                 tmp.bind("<Control-s>", self.saveFile)
 
                 if i > 0:
@@ -188,10 +188,10 @@ class TickersCsvEditorFrame(Frame):
             tmp.bind("<Shift-Tab>", self.focus_sh_tab)
             tmp.bind("<Return>", self.focus_down)
             tmp.bind("<Shift-Return>", self.focus_up)
-            tmp.bind("<Right>", self.focus_right)
-            tmp.bind("<Left>", self.focus_left)
-            tmp.bind("<Up>", self.focus_up)
-            tmp.bind("<Down>", self.focus_down)
+            tmp.bind("<Alt-Right>", self.focus_right)
+            tmp.bind("<Alt-Left>", self.focus_left)
+            tmp.bind("<Alt-Up>", self.focus_up)
+            tmp.bind("<Alt-Down>", self.focus_down)
             tmp.bind("<Control-s>", self.saveFile)
 
             tmp.bind("<Control-a>", self.selectall)
@@ -259,10 +259,10 @@ class TickersCsvEditorFrame(Frame):
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
                 tmp.bind("<Return>", self.focus_down)
                 tmp.bind("<Shift-Return>", self.focus_up)
-                tmp.bind("<Right>", self.focus_right)
-                tmp.bind("<Left>", self.focus_left)
-                tmp.bind("<Up>", self.focus_up)
-                tmp.bind("<Down>", self.focus_down)
+                tmp.bind("<Alt-Right>", self.focus_right)
+                tmp.bind("<Alt-Left>", self.focus_left)
+                tmp.bind("<Alt-Up>", self.focus_up)
+                tmp.bind("<Alt-Down>", self.focus_down)
                 tmp.bind("<Control-s>", self.saveFile)
 
                 if i > 0:
