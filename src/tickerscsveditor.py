@@ -37,7 +37,11 @@ class TickersCsvEditorFrame(Frame):
         filemenu.add_command(label="Sauvegarder", command=self.saveCells)
         filemenu.add_command(label="Ajouter une ligne", command=self.add_row)
 
+        trimenu = Menu(menubar, tearoff=0)
+        trimenu.add_command(label="Tri", command=self.tri)
+
         menubar.add_cascade(label="File", menu=filemenu)
+        menubar.add_cascade(label="Tri", menu=trimenu)
         #menubar.add_command(label="Exit", command=self.quit)
 
         self.master.title('Tickers.csv Editor - Alt+Flèche pour changer de cellule')
@@ -179,6 +183,16 @@ class TickersCsvEditorFrame(Frame):
                 cell.destroy()
                 self._cellList.remove(cell)
 
+    def tri(self):
+        vals = []
+        for i in range(1, len(self._currentCells)):
+            elt = []
+            for j in range(len(self._currentCells[0])):
+                elt.append(self._currentCells[i][j].get(1.0, END).strip())
+            vals.append(elt)
+        vals.sort(key = lambda x: x[1])
+        self.loadFromArray(vals)
+
     def add_row(self):
         self._currentCells.append([])
         for j in range(4):
@@ -204,6 +218,55 @@ class TickersCsvEditorFrame(Frame):
 
         self._currentCells[-1][0].focus_force()
         self._currentCell = self._currentCells[-1][0]
+
+    def loadFromArray(self, ary):
+        col = len(ary[0])
+
+        self.removeCells()
+
+        # get the max width of the cells
+        mx = 0
+        for i in range(len(ary)):
+            for j in range(len(ary[0])):
+                if(len(ary[i][j]) >= mx):
+                    mx = len(ary[i][j])
+        w = mx
+        self._width = mx
+
+        loadCells = []
+        for i in range(len(ary) + 1):
+            loadCells.append([])
+            for j in range(len(ary[0])):
+                loadCells[i].append([])
+
+        # create the new cells
+        for i in range(len(ary) + 1):
+            for j in range(len(ary[0])):
+                tmp = Text(self, width=w, height=1)
+                tmp.bind("<Tab>", self.focus_tab)
+                tmp.bind("<Shift-Tab>", self.focus_sh_tab)
+                tmp.bind("<Return>", self.focus_down)
+                tmp.bind("<Shift-Return>", self.focus_up)
+                tmp.bind("<Alt-Right>", self.focus_right)
+                tmp.bind("<Alt-Left>", self.focus_left)
+                tmp.bind("<Alt-Up>", self.focus_up)
+                tmp.bind("<Alt-Down>", self.focus_down)
+                tmp.bind("<Control-s>", self.saveFile)
+
+                if i > 0:
+                    tmp.insert(END, ary[i - 1][j])
+                    tmp.bind("<Control-a>", self.selectall)
+                else:
+                    self.createTitle(j, tmp)
+
+                loadCells[i][j] = tmp
+                tmp.focus_force()
+                self._cellList.append(tmp)
+
+                tmp.grid(padx=0, pady=0, column=j, row=i)
+
+        self._currentCells = loadCells
+        self._currentCell = self._currentCells[0][0]
 
     def loadCells(self):
         filename = self._csvfilename
@@ -279,7 +342,6 @@ class TickersCsvEditorFrame(Frame):
 
         self._currentCells = loadCells
         self._currentCell = self._currentCells[0][0]
-
 
     def saveCells(self):
         filename = self._csvfilename
