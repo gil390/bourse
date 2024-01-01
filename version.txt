@@ -1,2 +1,4 @@
 v0.3.1
     csv editor: chgt de cellule avec Alt+Flèche et menu tri
+v0.3.2
+    catch exception with message box + ticker saved if necessary
