@@ -9,6 +9,8 @@ import tkinter.ttk as ttk
 import utils
 import sellistframe
 import datetime
+import traceback
+
 from tickerscsveditor import TickersCsvEditor
 
 from tkscrolledframe import ScrolledFrame
@@ -77,6 +79,9 @@ class TheApp():
 
         self._config = utils.Config()
 
+        # pour debugger l'application
+        self._exceptionlist = []
+
         self._fileIsModified = False
         self._ticker_file = self._config.cfg("tickers_file_name")
         print(f'Tickers file : {self._ticker_file}')
@@ -108,7 +113,10 @@ class TheApp():
 
         self._inner_frame = sf.display_widget(ttk.Frame)
 
-        self.loadStockTickersLazyFrame()
+        try:
+            self.loadStockTickersLazyFrame()
+        except:
+            self._exceptionlist.append(traceback.format_exc())
 
         self._window.mainloop()
         plt.close('all')
@@ -137,6 +145,9 @@ class TheApp():
         else:
             print(f'NO STOCK POUR {code}')
         return sframe
+
+    def exceptionWindow(self):
+        utils.TopLvlWindow(self._window, "exception window", self._exceptionlist)
 
     def loadStockTickersLazyFrame(self):
         if len(self._stockDic) > 0:
@@ -244,6 +255,11 @@ class TheApp():
                 self._ticker_file)],
             ['Exit', self._window.destroy],
         ]
+
+        debugmenulist = [
+            ['Exception', self.exceptionWindow],
+        ]
+
         menubar = tk.Menu(self._window)
         self._window.config(menu=menubar)
         filemenu = tk.Menu(menubar)
@@ -252,9 +268,21 @@ class TheApp():
                 label=i[0],
                 command= i[1]
             )
+
+        debugmenu = tk.Menu(menubar)
+        for i in debugmenulist:
+            debugmenu.add_command(
+                label=i[0],
+                command= i[1]
+            )
+
         menubar.add_cascade(
             label="File",
             menu=filemenu
+        )
+        menubar.add_cascade(
+            label="Debug",
+            menu=debugmenu
         )
 
     def deloldisinfiles(self, isin_code):
