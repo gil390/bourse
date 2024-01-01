@@ -77,6 +77,7 @@ class TheApp():
 
         self._config = utils.Config()
 
+        self._fileIsModified = False
         self._ticker_file = self._config.cfg("tickers_file_name")
         print(f'Tickers file : {self._ticker_file}')
         if not os.path.exists(self._ticker_file):
@@ -115,13 +116,15 @@ class TheApp():
         self._config.writeConfig()
 
     def saveCSV(self):
-        with open(self._ticker_file, 'w', newline='') as csvfile:
-            owrite = csv.writer(csvfile)
-            for isin in self._stockDic:
-                nom = self._stockDic[isin]['nom']
-                etat = "ON" if self._stockDic[isin]['state'] else "OFF"
-                periode = self._stockDic[isin]['periode']
-                owrite.writerow([isin, nom, etat, periode])
+        if self._fileIsModified:
+            with open(self._ticker_file, 'w', newline='') as csvfile:
+                owrite = csv.writer(csvfile)
+                for isin in self._stockDic:
+                    nom = self._stockDic[isin]['nom']
+                    etat = "ON" if self._stockDic[isin]['state'] else "OFF"
+                    periode = self._stockDic[isin]['periode']
+                    owrite.writerow([isin, nom, etat, periode])
+            self._fileIsModified = False
 
     def getIsinSFrame(self, parent, code, nom, periode):
         sframe = None
@@ -221,6 +224,7 @@ class TheApp():
             new_state = not self._stockDic[isin]['state']
             self._stockDic[isin]['state'] = new_state
             self.refreshDisplay()
+            self._fileIsModified = True
 
     def dumpDic(self):
         for isin in self._stockDic:
