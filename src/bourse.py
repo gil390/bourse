@@ -117,6 +117,7 @@ class TheApp():
             self.loadStockTickersLazyFrame()
         except:
             self._exceptionlist.append(traceback.format_exc())
+            sys.stderr.write(traceback.format_exc());
 
         self._window.mainloop()
         plt.close('all')
