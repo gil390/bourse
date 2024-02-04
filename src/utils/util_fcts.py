@@ -40,7 +40,6 @@ def convertHistToPeriod(hist, period):
     volumelist = []
     dividendslist = []
     stocklist = []
-    CapGainslist = []
 
     for elt in df:
         firstdate = elt[1].iloc[0]['Date']
@@ -65,7 +64,7 @@ def convertHistToPeriod(hist, period):
 
     hist = pd.DataFrame({'Open':openlist, 'High':highlist,
         'Low':lowlist, 'Close':closelist, 'Volume':volumelist, 'Dividends':dividendslist,
-        'Stock Splits':stocklist, 'Capital Gains':CapGainslist},
+        'Stock Splits':stocklist},
         index=datelist)
     hist.rename_axis("Date")
 
